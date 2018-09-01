@@ -6,7 +6,7 @@
         <v-flex xs12>
           <v-carousel>
             <v-carousel-item
-              v-for="note of notes"
+              v-for="note of notesWithPreview"
               :key="note.id"
               :src="note.imageSrc"
               @click="onClickCarausel(note.id)"
@@ -29,7 +29,7 @@
         >
           <v-card>
             <v-img
-              :src="note.imageSrc"
+              :src="note.imageSrc || defaultImageSrc"
               height="200px"
             ></v-img>
 
@@ -57,13 +57,18 @@
   export default {
     data() {
       return {
-        notes: [
-          { title: 'squirrel', description: 'It is squirrel', text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolores, porro?', authorId: '1', private: false, id: '1', imageSrc: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg' },
-          { title: 'sky', description: 'It is sky', text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolores, porro?', authorId: '1', private: true, id: '2', imageSrc: 'https://cdn.vuetifyjs.com/images/carousel/sky.jpg' },
-          { title: 'bird', description: 'It is bird', text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolores, porro?', authorId: '2', private: false, id: '3', imageSrc: 'https://cdn.vuetifyjs.com/images/carousel/bird.jpg' },
-          { title: 'planet', description: 'It is planet', text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolores, porro?', authorId: '2', private: true, id: '4', imageSrc: 'https://cdn.vuetifyjs.com/images/carousel/planet.jpg' },
-        ],
       };
+    },
+    computed: {
+      notesWithPreview() {
+        return this.$store.getters.notesWithPreview;
+      },
+      notes() {
+        return this.$store.getters.notes;
+      },
+      defaultImageSrc() {
+        return this.$store.getters.defaultImageSrc;
+      },
     },
     methods: {
       onClickCarausel(id) {

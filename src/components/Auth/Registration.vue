@@ -18,19 +18,19 @@
               ></v-text-field>
               <v-text-field
                 prepend-icon="lock"
-                name="confirm-password"
-                label="Confirm password"
-                type="password"
-                v-model="confirmPassword"
-                :rules="confirmPasswordRules"
-              ></v-text-field>
-              <v-text-field
-                prepend-icon="lock"
                 name="password"
                 label="Password"
                 type="password"
                 v-model="password"
                 :rules="passwordRules"
+              ></v-text-field>
+              <v-text-field
+                prepend-icon="lock"
+                name="confirm-password"
+                label="Confirm password"
+                type="password"
+                v-model="confirmPassword"
+                :rules="confirmPasswordRules"
               ></v-text-field>
             </v-form>
           </v-card-text>
@@ -39,7 +39,8 @@
             <v-btn
               color="primary"
               @click="onSubmit"
-              :disabled="!valid"
+              :loading="loading"
+              :disabled="!valid || loading"
             >Create Account</v-btn>
           </v-card-actions>
         </v-card>
@@ -70,11 +71,19 @@
         valid: true,
       };
     },
+    computed: {
+      loading() {
+        return this.$store.getters.loading;
+      },
+    },
     methods: {
       onSubmit() {
         if (this.$refs.form.validate()) {
           const user = { email: this.email, password: this.password };
-          window.console.log(user);
+          this.$store.dispatch('registerUser', user)
+            .then()
+            .catch(error => window.console.log(error));
+          this.$router.push('/login/');
         }
       },
     },

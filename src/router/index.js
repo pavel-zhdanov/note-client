@@ -13,7 +13,7 @@ Vue.use(Router);
 export default new Router({
   routes: [
     { path: '', name: 'home', component: Home },
-    { path: '/note/:id', name: 'note', component: Note },
+    { path: '/note/:id', name: 'note', component: Note, props: true },
     { path: '/list', name: 'list', component: NoteList },
     { path: '/new', name: 'newNote', component: NewNote },
     { path: '/login', name: 'login', component: Login },
