@@ -3,11 +3,11 @@
     <v-layout row>
       <v-flex xs12 sm6 offset-sm3>
         <v-card>
-          <v-card-media
+          <v-img
             :src="note.imageSrc || defaultImageSrc"
             height="300px"
           >
-          </v-card-media>
+          </v-img>
           <v-card-text>
             <h1 class="text--primary">{{note.title}}</h1>
             <h2>{{note.description}}</h2>

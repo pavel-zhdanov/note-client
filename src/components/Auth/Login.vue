@@ -31,7 +31,8 @@
             <v-btn
               color="primary"
               @click="onSubmit"
-              :disabled="!valid"
+              :disabled="!valid || loading"
+              :loading="loading"
             >Login</v-btn>
           </v-card-actions>
         </v-card>
@@ -41,6 +42,8 @@
 </template>
 
 <script>
+  /* eslint-disable dot-notation */
+
   export default {
     data() {
       return {
@@ -57,13 +60,25 @@
         valid: true,
       };
     },
+    computed: {
+      loading() {
+        return this.$store.getters.loading;
+      },
+    },
     methods: {
       onSubmit() {
         if (this.$refs.form.validate()) {
           const user = { email: this.email, password: this.password };
-          window.console.log(user);
+          this.$store.dispatch('loginUser', user)
+            .then(() => this.$router.push('/'))
+            .catch(() => {});
         }
       },
+    },
+    created() {
+      if (this.$route.query['loginError']) {
+        this.$store.dispatch('setError', 'Please log in to access this page');
+      }
     },
   };
 </script>
