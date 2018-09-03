@@ -1,9 +1,16 @@
-/* eslint-disable dot-notation */
+/* eslint-disable dot-notation,consistent-return */
 import axios from 'axios';
+import jwt from 'jsonwebtoken';
+
+axios.defaults.baseURL = 'http://localhost:3001/';
 
 class User {
-  constructor(token) {
+  constructor(token, refreshToken, id) {
     this.token = token;
+    this.refreshToken = refreshToken;
+    this.id = id;
+    localStorage.setItem('user-token', token);
+    localStorage.setItem('user-refreshToken', refreshToken);
   }
 }
 
@@ -17,14 +24,17 @@ export default {
     },
   },
   actions: {
-    async registerUser({ commit }, payload) {
+    async registerUser({ commit, dispatch }, payload) {
       commit('clearError');
       commit('setLoading', true);
       try {
-        await axios.post('http://localhost:3001/api/v1/signup', {
+        const { data } = await axios.post('/api/signup', {
           username: payload.email,
           password: payload.password,
         });
+        const decodedToken = jwt.decode(data.token);
+        commit('setUser', new User(data.token, data.refreshToken, decodedToken.id));
+        dispatch('configAxios');
         commit('setLoading', false);
       } catch (error) {
         commit('setLoading', false);
@@ -32,32 +42,82 @@ export default {
         throw error;
       }
     },
-    async loginUser({ commit }, payload) {
+
+    async loginUser({ commit, dispatch }, payload) {
       commit('clearError');
       commit('setLoading', true);
       try {
-        const result = await axios.post('http://localhost:3001/api/v1/auth', {
+        const result = await axios.post('/api/login', {
           username: payload.email,
           password: payload.password,
         });
-        const token = result.data.token;
-        localStorage.setItem('user-token', token);
-        axios.defaults.headers.common['Authorization'] = token;
-        commit('setUser', new User(token));
+        const data = result.data;
+        window.console.dir(result);
+        window.console.log(data);
+        const decodedToken = jwt.decode(data.token);
+        commit('setUser', new User(data.token, data.refreshToken, decodedToken.id));
+        dispatch('configAxios');
         commit('setLoading', false);
       } catch (error) {
         commit('setLoading', false);
+        window.console.dir(error);
         commit('setError', error.response.data.message);
         throw error;
       }
     },
-    autoLoginUser({ commit }, payload) {
-      commit('setUser', new User(payload));
+
+    autoLoginUser({ commit, dispatch }, payload) {
+      const decodedToken = jwt.decode(payload.token);
+      commit('setUser', new User(payload.token, payload.refreshToken, decodedToken.id));
+      dispatch('configAxios');
     },
-    logoutUser({ commit }) {
+
+    async logoutUser({ commit, getters, dispatch }) {
       localStorage.removeItem('user-token');
-      delete axios.defaults.headers.common['Authorization'];
-      commit('setUser', null);
+      localStorage.removeItem('user-refreshToken');
+      try {
+        await axios.post('/api/logout', { refreshToken: getters.user.refreshToken });
+        commit('setUser', null);
+        dispatch('configAxios');
+      } catch (e) {
+        throw e;
+      }
+    },
+
+    configAxios({ commit, getters }) {
+      axios.interceptors.request.use(
+        (config) => {
+          if (!getters.user || !getters.user.token) return config;
+          const newConfig = { headers: {}, ...config };
+          newConfig.headers.Authorization = `Bearer ${getters.user.token}`;
+          return newConfig;
+        },
+        (error) => {
+          window.console.error(error);
+          Promise.reject(error);
+        },
+      );
+
+      axios.interceptors.response.use(
+        resp => resp,
+        async (error) => {
+          if (!getters.user ||
+            !getters.user.refreshToken ||
+            error.response.status !== 401 ||
+            error.config.retry) {
+            throw error;
+          }
+          let refreshRequest;
+          if (!refreshRequest) {
+            refreshRequest = axios.post('/api/refresh', { refreshToken: getters.user.refreshToken });
+          }
+          const { data } = await refreshRequest;
+          const decodedToken = jwt.decode(data.token);
+          commit('setUser', new User(data.token, data.refreshToken, decodedToken.id));
+          const newRequest = { ...error.config, retry: true };
+          return axios(newRequest);
+        },
+      );
     },
   },
   getters: {

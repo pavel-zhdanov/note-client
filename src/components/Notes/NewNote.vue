@@ -63,7 +63,8 @@
               class="white--text"
               color="primary"
               @click="createNote"
-              :disabled="!valid"
+              :disabled="!valid || loading"
+              :loading="loading"
             >Create Note</v-btn>
           </v-flex>
         </v-layout>
@@ -86,6 +87,11 @@
         valid: false,
       };
     },
+    computed: {
+      loading() {
+        return this.$store.getters.loading;
+      },
+    },
     methods: {
       createNote() {
         if (this.$refs.form.validate()) {
@@ -96,7 +102,9 @@
             private: this.private,
             image: this.image,
           };
-          this.$store.dispatch('createNote', note);
+          this.$store.dispatch('createNote', note)
+            .then(() => this.$router.push('/'))
+            .catch();
         }
       },
       triggerUpload() {
@@ -106,8 +114,7 @@
         const file = evt.target.files[0];
         const reader = new FileReader();
 
-        reader.onload = (e) => {
-          if (e) throw new Error('load unsucsecc');
+        reader.onload = () => {
           this.imageSrc = reader.result;
         };
         reader.readAsDataURL(file);

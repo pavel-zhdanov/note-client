@@ -81,7 +81,7 @@
         if (this.$refs.form.validate()) {
           const user = { email: this.email, password: this.password };
           this.$store.dispatch('registerUser', user)
-            .then(() => this.$router.push('/login/'))
+            .then(() => this.$router.push('/'))
             .catch(() => {});
         }
       },

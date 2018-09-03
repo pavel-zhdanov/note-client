@@ -1,7 +1,6 @@
 /* eslint-disable dot-notation,no-extra-boolean-cast */
 import Vue from 'vue';
 import Vuetify from 'vuetify';
-import axios from 'axios';
 import 'vuetify/dist/vuetify.min.css';
 import App from './App';
 import router from './router';
@@ -19,11 +18,14 @@ new Vue({
   components: { App },
   template: '<App/>',
   created() {
-    const token = localStorage.getItem('user-token');
-    if (token) {
-      window.console.log(token);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      this.$store.dispatch('autoLoginUser', token);
+    const data = {};
+    data.token = localStorage.getItem('user-token');
+    data.refreshToken = localStorage.getItem('user-refreshToken');
+    if (data.token && data.refreshToken) {
+      this.$store.dispatch('autoLoginUser', data)
+        .then()
+        .catch();
     }
+    this.$store.dispatch('fetchNotes');
   },
 });
