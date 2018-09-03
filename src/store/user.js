@@ -101,19 +101,26 @@ export default {
       axios.interceptors.response.use(
         resp => resp,
         async (error) => {
+          window.console.dir(error);
           if (!getters.user ||
             !getters.user.refreshToken ||
             error.response.status !== 401 ||
             error.config.retry) {
+            window.console.log('in if 1 2');
             throw error;
           }
           let refreshRequest;
+          window.console.log('after if 1');
           if (!refreshRequest) {
+            window.console.log('in if 2 1');
             refreshRequest = axios.post('/api/refresh', { refreshToken: getters.user.refreshToken });
+            window.console.log('in if 2 2 ');
           }
+          window.console.log('after if 2');
           const { data } = await refreshRequest;
           const decodedToken = jwt.decode(data.token);
           commit('setUser', new User(data.token, data.refreshToken, decodedToken.id));
+          window.console.log('before new request');
           const newRequest = { ...error.config, retry: true };
           return axios(newRequest);
         },

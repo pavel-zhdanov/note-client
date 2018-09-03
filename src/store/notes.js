@@ -25,7 +25,11 @@ export default {
     loadNotes(state, payload) {
       state.notes = payload;
     },
-
+    updateNote(state, payload) {
+      const note = state.notes.find(item => item.id === payload.id);
+      note.title = payload.title;
+      note.description = payload.description;
+    },
   },
   actions: {
     async createNote({ commit, getters }, payload) {
@@ -50,6 +54,28 @@ export default {
         commit('createNote', {
           ...newNote,
           id: data.note._id });
+        commit('setLoading', false);
+      } catch (error) {
+        commit('setError', error.message);
+        commit('setLoading', false);
+        throw error;
+      }
+    },
+
+    async updateNote({ commit, getters }, payload) {
+      commit('clearError');
+      commit('setLoading', true);
+      try {
+        await axios.put(`/api/note/${payload.id}`, {
+          title: payload.title,
+          description: payload.description,
+          id: payload.id,
+        });
+        commit('updateNote', {
+          title: payload.title,
+          description: payload.description,
+          id: payload.id,
+        });
         commit('setLoading', false);
       } catch (error) {
         commit('setError', error.message);
