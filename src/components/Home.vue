@@ -1,7 +1,7 @@
 <template>
   <div v-if="!loading">
 
-    <v-container fluid>
+    <v-container v-if="notesWithPreview.length > 0" fluid>
       <v-layout row>
         <v-flex xs12>
           <v-carousel>
@@ -24,7 +24,7 @@
           md4
           lg3
           xl3
-          v-for="note of notes"
+          v-for="note of publicNotes"
           :key="note.id"
         >
           <v-card>
@@ -77,8 +77,8 @@
       notesWithPreview() {
         return this.$store.getters.notesWithPreview;
       },
-      notes() {
-        return this.$store.getters.notes;
+      publicNotes() {
+        return this.$store.getters.publicNotes;
       },
       defaultImageSrc() {
         return this.$store.getters.defaultImageSrc;

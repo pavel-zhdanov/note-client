@@ -5,12 +5,50 @@ import jwt from 'jsonwebtoken';
 axios.defaults.baseURL = 'http://localhost:3001/';
 
 class User {
-  constructor(token, refreshToken, id) {
-    this.token = token;
-    this.refreshToken = refreshToken;
-    this.id = id;
-    localStorage.setItem('user-token', token);
-    localStorage.setItem('user-refreshToken', refreshToken);
+  constructor(data) {
+    window.console.log('CREATE USER');
+    const decodedToken = jwt.decode(data.token);
+    this.token = data.token;
+    this.refreshToken = data.refreshToken;
+    this.id = decodedToken.id;
+    this.email = decodedToken.username;
+    localStorage.setItem('user-token', data.token);
+    localStorage.setItem('user-refreshToken', data.refreshToken);
+    this.configAxios();
+  }
+  configAxios() {
+    axios.interceptors.request.use(
+      (config) => {
+        window.console.log('INTERCEPTOR ON REQUEST');
+        if (!this.token) return config;
+        const newConfig = { headers: {}, ...config };
+        newConfig.headers.Authorization = `Bearer ${this.token}`;
+        return newConfig;
+      },
+      (error) => {
+        Promise.reject(error);
+      },
+    );
+
+    axios.interceptors.response.use(
+      resp => resp,
+      async (error) => {
+        if (!this.refreshToken ||
+          error.response.status !== 401 ||
+          error.config.retry) {
+          throw error;
+        }
+        let refreshRequest;
+        if (!refreshRequest) {
+          refreshRequest = axios.post('/api/refresh', { refreshToken: this.refreshToken });
+        }
+        const { data } = await refreshRequest;
+        window.console.log('INTERCEOTORS ON RESPONSE');
+        if (data) this.constructor(data);
+        const newRequest = { ...error.config, retry: true };
+        return axios(newRequest);
+      },
+    );
   }
 }
 
@@ -24,7 +62,7 @@ export default {
     },
   },
   actions: {
-    async registerUser({ commit, dispatch }, payload) {
+    async registerUser({ commit }, payload) {
       commit('clearError');
       commit('setLoading', true);
       try {
@@ -32,9 +70,7 @@ export default {
           username: payload.email,
           password: payload.password,
         });
-        const decodedToken = jwt.decode(data.token);
-        commit('setUser', new User(data.token, data.refreshToken, decodedToken.id));
-        dispatch('configAxios');
+        commit('setUser', new User(data));
         commit('setLoading', false);
       } catch (error) {
         commit('setLoading', false);
@@ -43,88 +79,36 @@ export default {
       }
     },
 
-    async loginUser({ commit, dispatch }, payload) {
+    async loginUser({ commit }, payload) {
       commit('clearError');
       commit('setLoading', true);
       try {
-        const result = await axios.post('/api/login', {
+        const { data } = await axios.post('/api/login', {
           username: payload.email,
           password: payload.password,
         });
-        const data = result.data;
-        window.console.dir(result);
-        window.console.log(data);
-        const decodedToken = jwt.decode(data.token);
-        commit('setUser', new User(data.token, data.refreshToken, decodedToken.id));
-        dispatch('configAxios');
+        commit('setUser', new User(data));
         commit('setLoading', false);
       } catch (error) {
         commit('setLoading', false);
-        window.console.dir(error);
         commit('setError', error.response.data.message);
         throw error;
       }
     },
 
-    autoLoginUser({ commit, dispatch }, payload) {
-      const decodedToken = jwt.decode(payload.token);
-      commit('setUser', new User(payload.token, payload.refreshToken, decodedToken.id));
-      dispatch('configAxios');
+    autoLoginUser({ commit }, payload) {
+      commit('setUser', new User(payload));
     },
 
-    async logoutUser({ commit, getters, dispatch }) {
+    async logoutUser({ commit, getters }) {
       localStorage.removeItem('user-token');
       localStorage.removeItem('user-refreshToken');
       try {
         await axios.post('/api/logout', { refreshToken: getters.user.refreshToken });
         commit('setUser', null);
-        dispatch('configAxios');
       } catch (e) {
         throw e;
       }
-    },
-
-    configAxios({ commit, getters }) {
-      axios.interceptors.request.use(
-        (config) => {
-          if (!getters.user || !getters.user.token) return config;
-          const newConfig = { headers: {}, ...config };
-          newConfig.headers.Authorization = `Bearer ${getters.user.token}`;
-          return newConfig;
-        },
-        (error) => {
-          window.console.error(error);
-          Promise.reject(error);
-        },
-      );
-
-      axios.interceptors.response.use(
-        resp => resp,
-        async (error) => {
-          window.console.dir(error);
-          if (!getters.user ||
-            !getters.user.refreshToken ||
-            error.response.status !== 401 ||
-            error.config.retry) {
-            window.console.log('in if 1 2');
-            throw error;
-          }
-          let refreshRequest;
-          window.console.log('after if 1');
-          if (!refreshRequest) {
-            window.console.log('in if 2 1');
-            refreshRequest = axios.post('/api/refresh', { refreshToken: getters.user.refreshToken });
-            window.console.log('in if 2 2 ');
-          }
-          window.console.log('after if 2');
-          const { data } = await refreshRequest;
-          const decodedToken = jwt.decode(data.token);
-          commit('setUser', new User(data.token, data.refreshToken, decodedToken.id));
-          window.console.log('before new request');
-          const newRequest = { ...error.config, retry: true };
-          return axios(newRequest);
-        },
-      );
     },
   },
   getters: {

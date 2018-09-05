@@ -18,7 +18,7 @@
             v-model="description"
           ></v-textarea>
           <v-textarea
-            name="description"
+            name="text"
             label="Note text"
             type="text"
             v-model="text"
@@ -113,7 +113,6 @@
       onFileChange(evt) {
         const file = evt.target.files[0];
         const reader = new FileReader();
-
         reader.onload = () => {
           this.imageSrc = reader.result;
         };

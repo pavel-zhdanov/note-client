@@ -29,6 +29,13 @@ export default {
       const note = state.notes.find(item => item.id === payload.id);
       note.title = payload.title;
       note.description = payload.description;
+      note.text = payload.text;
+      note.isPrivate = payload.isPrivate;
+    },
+    deleteNote(state, payload) {
+      const note = state.notes.find(item => item.id === payload.id);
+      const indexNote = state.notes.indexOf(note);
+      state.notes.splice(indexNote, 1);
     },
   },
   actions: {
@@ -36,11 +43,16 @@ export default {
       commit('clearError');
       commit('setLoading', true);
       const image = payload.image;
+      let imageSrc;
       try {
-        const formData = new FormData();
-        formData.append('file', image);
-        const imageData = await axios.post('/api/note/image', formData);
-        const imageSrc = `${axios.defaults.baseURL}api/note/image/${imageData.data.id}`;
+        if (image) {
+          const formData = new FormData();
+          formData.append('file', image);
+          const { data } = await axios.post('/api/note/image', formData);
+          window.console.log(data);
+          imageSrc = `${axios.defaults.baseURL}api/note/image/${data.id}`;
+        }
+
         const newNote = new Note(
           payload.title,
           payload.description,
@@ -67,14 +79,13 @@ export default {
       commit('setLoading', true);
       try {
         await axios.put(`/api/note/${payload.id}`, {
-          title: payload.title,
-          description: payload.description,
-          id: payload.id,
+          ...payload,
         });
         commit('updateNote', {
           title: payload.title,
           description: payload.description,
           id: payload.id,
+          isPrivate: payload.isPrivate,
         });
         commit('setLoading', false);
       } catch (error) {
@@ -108,6 +119,20 @@ export default {
         throw error;
       }
     },
+
+    async deleteNote({ commit, getters }, payload) {
+      commit('clearError');
+      commit('setLoading', true);
+      try {
+        await axios.delete(`/api/note/${payload.id}`);
+        commit('deleteNote', { id: payload.id });
+        commit('setLoading', false);
+      } catch (error) {
+        commit('setError', error.message);
+        commit('setLoading', false);
+        throw error;
+      }
+    },
   },
   getters: {
     defaultImageSrc(state) {
@@ -116,14 +141,15 @@ export default {
     notes(state) {
       return state.notes;
     },
-    privateNotes(state) {
-      return state.notes.filter(note => note.private);
+
+    publicNotes(state) {
+      return state.notes.filter(note => !note.isPrivate);
     },
-    myNotes(state) {
-      return state.notes;
+    myNotes(state, getters) {
+      return state.notes.filter(note => note.authorId === getters.user.id);
     },
     notesWithPreview(state) {
-      return state.notes.filter(note => !!note.imageSrc);
+      return state.notes.filter(note => !!note.imageSrc && !note.isPrivate);
     },
     noteById(state) {
       return noteId => state.notes.find(note => note.id === noteId);

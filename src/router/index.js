@@ -6,7 +6,7 @@ import NoteList from '@/components/Notes/NoteList';
 import NewNote from '@/components/Notes/NewNote';
 import Login from '@/components/Auth/Login';
 import Registration from '@/components/Auth/Registration';
-import Orders from '@/components/User/Orders';
+import Profile from '@/components/User/Profile';
 import AuthGuard from './auth-guard';
 
 Vue.use(Router);
@@ -19,7 +19,7 @@ export default new Router({
     { path: '/new', name: 'newNote', component: NewNote, beforeEnter: AuthGuard },
     { path: '/login', name: 'login', component: Login },
     { path: '/registration', name: 'registration', component: Registration },
-    { path: '/orders', name: 'orders', component: Orders, beforeEnter: AuthGuard },
+    { path: '/user', name: 'profile', component: Profile, beforeEnter: AuthGuard },
   ],
   mode: 'history',
 });

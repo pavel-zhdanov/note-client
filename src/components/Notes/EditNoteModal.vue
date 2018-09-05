@@ -33,8 +33,23 @@
                 required
                 :rules="[(v) => !!v || 'Description is required!']"
               ></v-textarea>
+                <v-textarea
+                  name="text"
+                  label="Note text"
+                  type="text"
+                  v-model="editedText"
+                ></v-textarea>
                 </v-form>
             </v-card-text>
+          </v-flex>
+        </v-layout>
+        <v-layout row>
+          <v-flex xs12>
+            <v-switch
+              label="Note is private?"
+              v-model="editedIsPrivate"
+              color="primary"
+            ></v-switch>
           </v-flex>
         </v-layout>
         <v-divider></v-divider>
@@ -66,6 +81,8 @@
         modal: false,
         editedTitle: this.note.title,
         editedDescription: this.note.description,
+        editedText: this.note.text,
+        editedIsPrivate: this.note.isPrivate,
         valid: false,
       };
     },
@@ -73,12 +90,16 @@
       onCancel() {
         this.editedTitle = this.note.title;
         this.editedDescription = this.note.description;
+        this.editedText = this.note.text;
+        this.editedIsPrivate = this.note.isPrivate;
         this.modal = false;
       },
       onSave() {
         this.$store.dispatch('updateNote', {
           title: this.editedTitle,
           description: this.editedDescription,
+          text: this.editedText,
+          isPrivate: this.editedIsPrivate,
           id: this.note.id,
         })
           .then(() => {

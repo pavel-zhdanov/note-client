@@ -16,6 +16,7 @@
           </v-list-tile-action>
           <v-list-tile-content>
             <v-list-tile-title v-text="link.title"></v-list-tile-title>
+            <v-list-tile-sub-title v-if="(link.title === 'Profile')" v-text="user.email"></v-list-tile-sub-title>
           </v-list-tile-content>
         </v-list-tile>
 
@@ -62,6 +63,7 @@
           <v-icon left>exit_to_app</v-icon>
           Logout
         </v-btn>
+
       </v-toolbar-items>
     </v-toolbar>
 
@@ -103,11 +105,13 @@
       isUserLoggedIn() {
         return this.$store.getters.isUserLoggedIn;
       },
+      user() {
+        return this.$store.getters.user;
+      },
       links() {
         if (this.isUserLoggedIn) {
           return [
-            { title: 'Home', icon: 'home', url: '/' },
-            { title: 'Orders', icon: 'bookmark_border', url: '/orders' },
+            { title: 'Profile', icon: 'account_box', url: '/user' },
             { title: 'New note', icon: 'note_add', url: '/new' },
             { title: 'My notes', icon: 'list', url: '/list' },
           ];
