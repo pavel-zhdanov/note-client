@@ -110,6 +110,22 @@ export default {
         throw e;
       }
     },
+
+    async checkUsernameOnAvailable({ commit }, payload) {
+      commit('clearError');
+      commit('setLoading', true);
+      try {
+        const { data } = await axios.post('/api/check', {
+          username: payload.email,
+        });
+        commit('setUser', new User(data));
+        commit('setLoading', false);
+      } catch (error) {
+        commit('setLoading', false);
+        commit('setError', error.response.data.message);
+        throw error;
+      }
+    },
   },
   getters: {
     user(state) {
