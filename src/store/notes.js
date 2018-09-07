@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign,no-underscore-dangle,no-unused-vars */
 import axios from 'axios';
+import coder from '../util/coder';
 
 class Note {
   constructor(title, description, text, authorId, isPrivate = false, id, imageSrc) {
@@ -61,6 +62,9 @@ export default {
           payload.isPrivate,
           payload.id,
           imageSrc);
+        if (payload.key.length > 0) {
+          newNote.text = coder.encode(newNote.text, payload.key);
+        }
         window.console.log(newNote);
         const { data } = await axios.post('/api/note/new', newNote);
         commit('createNote', {

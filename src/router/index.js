@@ -7,6 +7,7 @@ import NewNote from '@/components/Notes/NewNote';
 import Login from '@/components/Auth/Login';
 import Registration from '@/components/Auth/Registration';
 import Profile from '@/components/User/Profile';
+import Chat from '@/components/Chat/Chat';
 import AuthGuard from './auth-guard';
 
 Vue.use(Router);
@@ -20,6 +21,7 @@ export default new Router({
     { path: '/login', name: 'login', component: Login },
     { path: '/registration', name: 'registration', component: Registration },
     { path: '/user', name: 'profile', component: Profile, beforeEnter: AuthGuard },
+    { path: '/chat', name: 'chat', component: Chat, beforeEnter: AuthGuard },
   ],
   mode: 'history',
 });

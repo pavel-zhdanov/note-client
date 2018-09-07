@@ -1,13 +1,18 @@
 <template>
-  <v-container>
-    <v-layout row v-if="myNotes.length !== 0">
-      <v-flex xs12 sm8 md6 offset-sm2 offset-md3>
+  <v-container grid-list-lg>
+
+    <v-layout>
+      <v-flex>
         <h1 class="text--secondary mb-3">My notes</h1>
-        <v-card
-          class="elevation-10 mb-4"
-          v-for="item in myNotes"
-          :key="item.id"
-        >
+      </v-flex>
+    </v-layout>
+
+    <v-layout row wrap v-if="myNotes.length !== 0">
+      <v-flex xs12 sm6 md5 lg4 xl4
+              mb-3
+              v-for="item in myNotes"
+              :key="item.id">
+        <v-card>
           <v-layout row>
             <v-flex xs-4>
               <v-img
@@ -17,8 +22,8 @@
             </v-flex>
             <v-flex xs-8>
               <v-card-text>
-                <h2> {{item.title}}</h2>
-                <p>{{item.description}}</p>
+                <h2> {{item.title || '-'}}</h2>
+                <p>{{item.description || '-'}}</p>
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>

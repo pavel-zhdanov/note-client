@@ -114,6 +114,7 @@
             { title: 'Profile', icon: 'account_box', url: '/user' },
             { title: 'New note', icon: 'note_add', url: '/new' },
             { title: 'My notes', icon: 'list', url: '/list' },
+            { title: 'Chat', icon: 'chat', url: '/chat' },
           ];
         }
         return [

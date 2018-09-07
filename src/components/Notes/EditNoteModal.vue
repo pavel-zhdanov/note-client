@@ -1,60 +1,43 @@
 <template>
   <v-dialog
-    width="400px"
-    v-model="modal">
+    v-model="modal"
+    max-width="1500px">
     <v-btn class="primary" slot="activator">Edit</v-btn>
     <v-card>
       <v-container>
         <v-layout row>
-          <v-flex xs12>
+          <v-flex xs12 lg10 offset-lg1>
             <v-card-title>
               <h1 class="text--primary">Edit note</h1>
             </v-card-title>
-          </v-flex>
-        </v-layout>
-        <v-divider></v-divider>
-        <v-layout row>
-          <v-flex xs12>
-            <v-card-text>
-              <v-form ref="form" v-model="valid" validation>
+            <v-form ref="form" v-model="valid"  class="pa-3 pt-4">
               <v-text-field
                 name="title"
                 label="Title"
                 type="text"
                 v-model="editedTitle"
-                required
-                :rules="[(v) => !!v || 'Title is required!']"
               ></v-text-field>
               <v-textarea
                 name="description"
                 label="Description"
                 type="text"
                 v-model="editedDescription"
-                required
-                :rules="[(v) => !!v || 'Description is required!']"
+                auto-grow
+                rows="3"
               ></v-textarea>
-                <v-textarea
-                  name="text"
-                  label="Note text"
-                  type="text"
-                  v-model="editedText"
-                ></v-textarea>
-                </v-form>
-            </v-card-text>
-          </v-flex>
-        </v-layout>
-        <v-layout row>
-          <v-flex xs12>
-            <v-switch
-              label="Note is private?"
-              v-model="editedIsPrivate"
-              color="primary"
-            ></v-switch>
-          </v-flex>
-        </v-layout>
-        <v-divider></v-divider>
-        <v-layout row>
-          <v-flex xs12>
+              <v-textarea
+                name="text"
+                label="Note text"
+                type="text"
+                v-model="editedText"
+                rows="10"
+              ></v-textarea>
+              <v-switch
+                label="Note is private?"
+                v-model="editedIsPrivate"
+                color="primary"
+              ></v-switch>
+            </v-form>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn flat @click="onCancel">Cancel</v-btn>

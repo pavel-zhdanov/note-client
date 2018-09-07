@@ -25,8 +25,7 @@
           lg3
           xl3
           v-for="note of publicNotes"
-          :key="note.id"
-        >
+          :key="note.id">
           <v-card>
             <v-img
               :src="note.imageSrc || defaultImageSrc"
