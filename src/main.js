@@ -34,9 +34,9 @@ new Vue({
   template: '<App/>',
   created() {
     const data = {};
-    data.token = localStorage.getItem('user-token');
     data.refreshToken = localStorage.getItem('user-refreshToken');
-    if (data.token && data.refreshToken) {
+    data.token = localStorage.getItem('user-token');
+    if (data.refreshToken) {
       this.$store.dispatch('autoLoginUser', data)
         .then()
         .catch();

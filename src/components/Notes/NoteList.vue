@@ -14,13 +14,13 @@
               :key="item.id">
         <v-card>
           <v-layout row>
-            <v-flex xs-4>
+            <v-flex xs4>
               <v-img
                 :src="item.imageSrc || defaultImageSrc"
                 height="150px"
               ></v-img>
             </v-flex>
-            <v-flex xs-8>
+            <v-flex xs8>
               <v-card-text>
                 <h2> {{item.title || '-'}}</h2>
                 <p>{{item.description || '-'}}</p>

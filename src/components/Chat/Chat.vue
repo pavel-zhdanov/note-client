@@ -7,11 +7,28 @@
       justify-center>
       <v-flex xs12 sm6>
         <v-card flat tile>
-          <v-card-text class="pa-1 ma-0" style="word-wrap: break-word">
-            <span v-if="!isAMultyMsg(index)" class="subheading primary--text font-weight-bold">{{item.user}}</span>
-            <span v-if="!isAMultyMsg(index)" class="secondary--text">{{item.date.getHours()}}:{{item.date.getMinutes()}}</span>
-            <p class="pa-0 ma-0">{{item.message}}</p>
-          </v-card-text>
+          <v-layout row>
+          <v-flex xs1>
+            <v-avatar
+              size="50px"
+              color="grey lighten-4"
+              v-if="!isAMultyMsg(index)"
+            >
+              <v-img
+                :src="item.avatarSrc"
+                alt="avatar"
+              >
+              </v-img>
+            </v-avatar>
+          </v-flex>
+          <v-flex xs11>
+            <v-card-text class="pa-1 ma-0" style="word-wrap: break-word">
+              <span v-if="!isAMultyMsg(index)" class="subheading primary--text font-weight-bold">{{item.user}}</span>
+              <span v-if="!isAMultyMsg(index)" class="secondary--text">{{item.date.getHours()}}:{{item.date.getMinutes()}}</span>
+              <p class="pa-0 ma-0">{{item.message}}</p>
+            </v-card-text>
+          </v-flex>
+          </v-layout>
         </v-card>
       </v-flex>
     </v-layout>
@@ -98,8 +115,9 @@
           const now = new Date();
           this.$socket.emit('SEND_MESSAGE', {
             createAt: now.getTime(),
-            user: this.user.email,
+            user: this.user.nickname,
             message: this.message,
+            avatarSrc: this.user.avatarSrc,
           });
           this.message = '';
         }

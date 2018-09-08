@@ -40,18 +40,14 @@ export default {
     },
   },
   actions: {
-    async createNote({ commit, getters }, payload) {
+    async createNote({ commit, getters, dispatch }, payload) {
       commit('clearError');
       commit('setLoading', true);
       const image = payload.image;
       let imageSrc;
       try {
         if (image) {
-          const formData = new FormData();
-          formData.append('file', image);
-          const { data } = await axios.post('/api/note/image', formData);
-          window.console.log(data);
-          imageSrc = `${axios.defaults.baseURL}api/note/image/${data.id}`;
+          imageSrc = await dispatch('loadImage', { image });
         }
 
         const newNote = new Note(
@@ -131,6 +127,26 @@ export default {
         await axios.delete(`/api/note/${payload.id}`);
         commit('deleteNote', { id: payload.id });
         commit('setLoading', false);
+      } catch (error) {
+        commit('setError', error.message);
+        commit('setLoading', false);
+        throw error;
+      }
+    },
+
+    async loadImage({ commit }, payload) {
+      commit('clearError');
+      commit('setLoading', true);
+      const image = payload.image;
+      let imageSrc;
+      try {
+        const formData = new FormData();
+        formData.append('file', image);
+        const { data } = await axios.post('/api/note/image', formData);
+        window.console.log(data);
+        imageSrc = `${axios.defaults.baseURL}api/note/image/${data.id}`;
+        commit('setLoading', false);
+        return imageSrc;
       } catch (error) {
         commit('setError', error.message);
         commit('setLoading', false);

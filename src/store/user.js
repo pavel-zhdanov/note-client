@@ -1,19 +1,19 @@
 /* eslint-disable dot-notation,consistent-return */
 import axios from 'axios';
-import jwt from 'jsonwebtoken';
 
 axios.defaults.baseURL = 'http://localhost:3001/';
 
 class User {
   constructor(data) {
     window.console.log('CREATE USER');
-    const decodedToken = jwt.decode(data.token);
     this.token = data.token;
     this.refreshToken = data.refreshToken;
-    this.id = decodedToken.id;
-    this.email = decodedToken.username;
-    localStorage.setItem('user-token', data.token);
+    this.id = data.id;
+    this.email = data.username;
+    this.nickname = data.nickname;
+    this.avatarSrc = data.avatarSrc;
     localStorage.setItem('user-refreshToken', data.refreshToken);
+    localStorage.setItem('user-token', data.token);
     this.configAxios();
   }
   configAxios() {
@@ -43,8 +43,13 @@ class User {
           refreshRequest = axios.post('/api/refresh', { refreshToken: this.refreshToken });
         }
         const { data } = await refreshRequest;
-        window.console.log('INTERCEOTORS ON RESPONSE');
-        if (data) this.constructor(data);
+        window.console.log('INTERCEPTORS ON RESPONSE');
+        if (data) {
+          this.token = data.token;
+          this.refreshToken = data.refreshToken;
+          localStorage.setItem('user-refreshToken', data.refreshToken);
+          localStorage.setItem('user-token', data.token);
+        }
         const newRequest = { ...error.config, retry: true };
         return axios(newRequest);
       },
@@ -60,15 +65,28 @@ export default {
     setUser(state, payload) {
       state.user = payload;
     },
+    updateUser(state, payload) {
+      state.user.nickname = payload.nickname;
+      state.user.avatarSrc = payload.avatarSrc;
+      state.user.email = payload.username;
+      state.user.id = payload.id;
+    },
   },
   actions: {
-    async registerUser({ commit }, payload) {
+    async registerUser({ commit, dispatch }, payload) {
       commit('clearError');
       commit('setLoading', true);
+      const image = payload.image;
+      let imageSrc;
       try {
+        if (image) {
+          imageSrc = await dispatch('loadImage', { image });
+        }
         const { data } = await axios.post('/api/signup', {
           username: payload.email,
           password: payload.password,
+          nickname: payload.nickname,
+          avatarSrc: imageSrc,
         });
         commit('setUser', new User(data));
         commit('setLoading', false);
@@ -96,8 +114,18 @@ export default {
       }
     },
 
-    autoLoginUser({ commit }, payload) {
+    async autoLoginUser({ commit }, payload) {
       commit('setUser', new User(payload));
+      commit('clearError');
+      commit('setLoading', true);
+      try {
+        const { data } = await axios.get('/api/user');
+        commit('updateUser', data);
+        commit('setLoading', false);
+      } catch (error) {
+        commit('setLoading', false);
+        commit('setError', error.response.data.message);
+      }
     },
 
     async logoutUser({ commit, getters }) {
@@ -111,18 +139,21 @@ export default {
       }
     },
 
-    async checkUsernameOnAvailable({ commit }, payload) {
+    async checkOnAvailable({ commit }, payload) {
       commit('clearError');
       commit('setLoading', true);
       try {
         const { data } = await axios.post('/api/check', {
-          username: payload.email,
+          field: payload.field,
+          value: payload.value,
         });
-        commit('setUser', new User(data));
+        window.console.log(data);
+        if (!data.isAvailable) throw new Error(`This ${payload.field} are not available`);
         commit('setLoading', false);
+        return data.isAvailable;
       } catch (error) {
         commit('setLoading', false);
-        commit('setError', error.response.data.message);
+        commit('setError', error.message);
         throw error;
       }
     },
