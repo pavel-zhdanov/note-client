@@ -21,9 +21,9 @@
               ></v-img>
             </v-flex>
             <v-flex xs8>
-              <v-card-text>
-                <h2> {{item.title || '-'}}</h2>
-                <p>{{item.description || '-'}}</p>
+              <v-card-text style="word-wrap: break-word">
+                <h2> {{item.title || `Empty title`}}</h2>
+                <p>{{item.description || `Empty description`}}</p>
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>

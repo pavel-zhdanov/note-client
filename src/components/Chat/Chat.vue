@@ -5,12 +5,13 @@
       v-for="(item, index) in messages"
       :key="item.createAt"
       justify-center>
-      <v-flex xs12 sm6>
+      <v-flex xs12 sm10 md8 lg6>
         <v-card flat tile>
           <v-layout row>
-          <v-flex xs1>
+          <v-flex xs2 sm1 md1 lg1>
             <v-avatar
               size="50px"
+              style="min-width: 50px"
               color="grey lighten-4"
               v-if="!isAMultyMsg(index)"
             >
@@ -21,7 +22,7 @@
               </v-img>
             </v-avatar>
           </v-flex>
-          <v-flex xs11>
+          <v-flex xs10 sm11 md11>
             <v-card-text class="pa-1 ma-0" style="word-wrap: break-word">
               <span v-if="!isAMultyMsg(index)" class="subheading primary--text font-weight-bold">{{item.user}}</span>
               <span v-if="!isAMultyMsg(index)" class="secondary--text">{{item.date.getHours()}}:{{item.date.getMinutes()}}</span>
@@ -33,8 +34,8 @@
       </v-flex>
     </v-layout>
     <v-footer app :height="footerHeight" color="white">
-      <v-layout row wrap>
-        <v-flex xs12 sm6 offset-sm3 pa-5>
+      <v-layout row wrap justify-center>
+        <v-flex xs12 sm10 md8 lg6 pa-5>
           <v-text-field
             v-model="message"
             append-outer-icon="send"

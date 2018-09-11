@@ -22,7 +22,7 @@
           xs12
           sm6
           md4
-          lg3
+          lg4
           xl3
           v-for="note of publicNotes"
           :key="note.id">
@@ -32,12 +32,12 @@
               height="200px"
             ></v-img>
 
-            <v-card-title primary-title>
+            <v-card-text style="word-wrap: break-word">
               <div>
                 <h3 class="headline mb-0">{{note.title}}</h3>
                 <div>{{note.description}}</div>
               </div>
-            </v-card-title>
+            </v-card-text>
 
             <v-card-actions>
               <v-spacer></v-spacer>

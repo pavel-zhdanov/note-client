@@ -4,13 +4,14 @@ import Vuetify from 'vuetify';
 import SocketIO from 'socket.io-client';
 import VueSocketIO from 'vue-socket.io';
 import 'vuetify/dist/vuetify.min.css';
-// import colors from 'vuetify/es5/util/colors';
 import App from './App';
 import router from './router';
 import store from './store/index';
 import config from './config';
 
+import interceptorsSetup from './util/interceptors';
 
+interceptorsSetup();
 const SocketInstance = SocketIO(config.server);
 
 Vue.use(VueSocketIO, SocketInstance, store);

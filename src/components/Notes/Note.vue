@@ -9,7 +9,7 @@
             height="300px"
           >
           </v-img>
-          <v-card-text>
+          <v-card-text style="word-wrap: break-word">
             <h1 class="text--primary py-3">{{note.title}}</h1>
             <v-divider></v-divider>
             <h2>{{note.description}}</h2>
@@ -18,16 +18,16 @@
           </v-card-text>
           <v-card-actions pa-5>
             <v-spacer></v-spacer>
-            <v-btn flat @click="onEncode">{{encode? 'Encode !': 'Encode ?'}}</v-btn>
-            <v-btn flat v-if="note.authorId === user.id" class="warning" @click="onDelete">Delete</v-btn>
-            <app-edit-note-modal v-if="note.authorId === user.id" :note="note"></app-edit-note-modal>
+            <v-btn flat @click="onDecode">{{decode? 'Decode !': 'Decode ?'}}</v-btn>
+            <v-btn flat v-if="user && note.authorId === user.id" class="warning" @click="onDelete">Delete</v-btn>
+            <app-edit-note-modal v-if="user && note.authorId === user.id" :note="note"></app-edit-note-modal>
           </v-card-actions>
           <v-layout justify-end>
             <v-flex xs12 sm6>
               <v-text-field
                 clearable
                 class="pa-0 ma-0"
-                v-if="encode"
+                v-if="decode"
                 name="key"
                 label="Key for encode note"
                 type="text"
@@ -67,7 +67,7 @@
     props: ['id'],
     data() {
       return {
-        encode: false,
+        decode: false,
         key: '',
         decodedText: '',
       };
@@ -93,10 +93,12 @@
         return this.$store.getters.user;
       },
       text() {
+        if (!this.note.text) return '';
+        window.console.log(this.note);
+        if (this.decodedText.length > 0) return this.decodedText;
         if (this.note.text.length > 20 && this.note.text.indexOf(' ') === -1) {
           return 'This text are encoded';
         }
-        if (this.decodedText.length > 0) return this.decodedText;
         return this.note.text;
       },
     },
@@ -105,17 +107,18 @@
         this.$store.dispatch('deleteNote', {
           id: this.note.id,
         })
-          .then(() => {
-            this.$router.push('/list');
-          })
+          .then(() => {})
           .catch(() => {});
+        this.$router.push('/list');
       },
-      onEncode() {
+      onDecode() {
         if (this.key.length === 0) {
-          this.encode = !this.encode;
+          this.decode = !this.decode;
           this.decodedText = '';
         } else {
+          window.console.log(this.key);
           this.decodedText = coder.decode(this.note.text, this.key);
+          window.console.log(this.decodedText);
         }
       },
     },

@@ -1,59 +1,19 @@
 /* eslint-disable dot-notation,consistent-return */
 import axios from 'axios';
 
-axios.defaults.baseURL = 'http://localhost:3001/';
-
 class User {
   constructor(data) {
     window.console.log('CREATE USER');
+    window.console.log(data);
     this.token = data.token;
     this.refreshToken = data.refreshToken;
+    window.console.log(this.refreshToken);
     this.id = data.id;
     this.email = data.username;
     this.nickname = data.nickname;
     this.avatarSrc = data.avatarSrc;
     localStorage.setItem('user-refreshToken', data.refreshToken);
     localStorage.setItem('user-token', data.token);
-    this.configAxios();
-  }
-  configAxios() {
-    axios.interceptors.request.use(
-      (config) => {
-        window.console.log('INTERCEPTOR ON REQUEST');
-        if (!this.token) return config;
-        const newConfig = { headers: {}, ...config };
-        newConfig.headers.Authorization = `Bearer ${this.token}`;
-        return newConfig;
-      },
-      (error) => {
-        Promise.reject(error);
-      },
-    );
-
-    axios.interceptors.response.use(
-      resp => resp,
-      async (error) => {
-        if (!this.refreshToken ||
-          error.response.status !== 401 ||
-          error.config.retry) {
-          throw error;
-        }
-        let refreshRequest;
-        if (!refreshRequest) {
-          refreshRequest = axios.post('/api/refresh', { refreshToken: this.refreshToken });
-        }
-        const { data } = await refreshRequest;
-        window.console.log('INTERCEPTORS ON RESPONSE');
-        if (data) {
-          this.token = data.token;
-          this.refreshToken = data.refreshToken;
-          localStorage.setItem('user-refreshToken', data.refreshToken);
-          localStorage.setItem('user-token', data.token);
-        }
-        const newRequest = { ...error.config, retry: true };
-        return axios(newRequest);
-      },
-    );
   }
 }
 
@@ -70,6 +30,10 @@ export default {
       state.user.avatarSrc = payload.avatarSrc;
       state.user.email = payload.username;
       state.user.id = payload.id;
+    },
+    updateTokens(state, payload) {
+      state.user.token = payload.token;
+      state.user.refreshToken = payload.refreshToken;
     },
   },
   actions: {
@@ -105,6 +69,7 @@ export default {
           username: payload.email,
           password: payload.password,
         });
+        window.console.log(data);
         commit('setUser', new User(data));
         commit('setLoading', false);
       } catch (error) {
@@ -119,7 +84,10 @@ export default {
       commit('clearError');
       commit('setLoading', true);
       try {
-        const { data } = await axios.get('/api/user');
+        window.console.log('AUTOLOGIN1');
+        const { data } = await axios.get('/api/user/');
+        window.console.log(data);
+        window.console.log('AUTOLOGIN');
         commit('updateUser', data);
         commit('setLoading', false);
       } catch (error) {
@@ -135,6 +103,7 @@ export default {
         await axios.post('/api/logout', { refreshToken: getters.user.refreshToken });
         commit('setUser', null);
       } catch (e) {
+        commit('setUser', null);
         throw e;
       }
     },
@@ -161,6 +130,18 @@ export default {
   getters: {
     user(state) {
       return state.user;
+    },
+    token(state) {
+      if (state.user) {
+        return state.user.token;
+      }
+      return null;
+    },
+    refreshToken(state) {
+      if (state.user) {
+        return state.user.refreshToken;
+      }
+      return null;
     },
     isUserLoggedIn(state) {
       return state.user !== null;
