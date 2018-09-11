@@ -153,6 +153,24 @@ export default {
         throw error;
       }
     },
+    async updateImage({ commit }, payload) {
+      commit('clearError');
+      commit('setLoading', true);
+      const image = payload.image;
+      const imageSrc = payload.imageSrc.replace(axios.defaults.baseURL, '/');
+      try {
+        const formData = new FormData();
+        formData.append('file', image);
+        const { data } = await axios.put(imageSrc, formData);
+        window.console.log(data);
+        commit('setLoading', false);
+        return imageSrc;
+      } catch (error) {
+        commit('setError', error.message);
+        commit('setLoading', false);
+        throw error;
+      }
+    },
   },
   getters: {
     defaultImageSrc(state) {

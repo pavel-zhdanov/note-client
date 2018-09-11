@@ -26,10 +26,10 @@ export default {
       state.user = payload;
     },
     updateUser(state, payload) {
-      state.user.nickname = payload.nickname;
-      state.user.avatarSrc = payload.avatarSrc;
-      state.user.email = payload.username;
-      state.user.id = payload.id;
+      state.user.nickname = payload.nickname || state.user.nickname;
+      state.user.avatarSrc = payload.avatarSrc || state.user.avatarSrc;
+      state.user.email = payload.username || state.user.email;
+      state.user.id = payload.id || state.user.id;
     },
     updateTokens(state, payload) {
       state.user.token = payload.token;
@@ -53,6 +53,29 @@ export default {
           avatarSrc: imageSrc,
         });
         commit('setUser', new User(data));
+        commit('setLoading', false);
+      } catch (error) {
+        commit('setLoading', false);
+        commit('setError', error.response.data.message);
+        throw error;
+      }
+    },
+
+    async updateUserData({ commit, dispatch, getters }, payload) {
+      commit('clearError');
+      commit('setLoading', true);
+      const image = payload.image;
+      const imageSrc = getters.user.avatarSrc;
+      try {
+        if (image) {
+          await dispatch('updateImage', { image, imageSrc });
+        }
+        window.console.log('updateUserData');
+        window.console.log(payload.nickname);
+        const { data } = await axios.put('/api/user', {
+          nickname: payload.nickname,
+        });
+        commit('updateUser', data);
         commit('setLoading', false);
       } catch (error) {
         commit('setLoading', false);

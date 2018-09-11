@@ -116,9 +116,8 @@
           this.decode = !this.decode;
           this.decodedText = '';
         } else {
-          window.console.log(this.key);
+          this.decode = !this.decode;
           this.decodedText = coder.decode(this.note.text, this.key);
-          window.console.log(this.decodedText);
         }
       },
     },

@@ -100,7 +100,7 @@
                   class="white--text mb-3"
                   color="primary"
                   @click="triggerUpload"
-                >Upload preview
+                >Upload avatar
                   <v-icon right dark>cloud_upload</v-icon>
                 </v-btn>
                 <input
