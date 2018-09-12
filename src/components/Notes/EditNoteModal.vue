@@ -2,24 +2,24 @@
   <v-dialog
     v-model="modal"
     max-width="1500px">
-    <v-btn class="primary" slot="activator">Edit</v-btn>
+    <v-btn class="primary" slot="activator">{{$vuetify.t('$vuetify.btn.edit')}}</v-btn>
     <v-card>
       <v-container>
         <v-layout row>
           <v-flex xs12 lg10 offset-lg1>
             <v-card-title>
-              <h1 class="text--primary">Edit note</h1>
+              <h1 class="text--primary">{{$vuetify.t('$vuetify.form.editNote')}}</h1>
             </v-card-title>
             <v-form ref="form" v-model="valid"  class="pa-3 pt-4">
               <v-text-field
                 name="title"
-                label="Title"
+                :label="$vuetify.t('$vuetify.field.title')"
                 type="text"
                 v-model="editedTitle"
               ></v-text-field>
               <v-textarea
                 name="description"
-                label="Description"
+                :label="$vuetify.t('$vuetify.field.description')"
                 type="text"
                 v-model="editedDescription"
                 auto-grow
@@ -27,20 +27,20 @@
               ></v-textarea>
               <v-textarea
                 name="text"
-                label="Note text"
+                :label="$vuetify.t('$vuetify.field.text')"
                 type="text"
                 v-model="editedText"
                 rows="10"
               ></v-textarea>
               <v-switch
-                label="Note is private?"
+                :label="$vuetify.t('$vuetify.field.isPrivate')"
                 v-model="editedIsPrivate"
                 color="primary"
               ></v-switch>
             </v-form>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn flat @click="onCancel">Cancel</v-btn>
+              <v-btn flat @click="onCancel">{{$vuetify.t('$vuetify.btn.cancel')}}</v-btn>
               <v-btn
                 raised
                 @click="onSave"
@@ -48,7 +48,7 @@
                 class="white--text"
                 :disabled="!valid || loading"
                 :loading="loading"
-              >Save</v-btn>
+              >{{$vuetify.t('$vuetify.btn.save')}}</v-btn>
             </v-card-actions>
           </v-flex>
         </v-layout>

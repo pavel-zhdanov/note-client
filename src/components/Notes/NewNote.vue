@@ -2,29 +2,30 @@
   <v-container>
     <v-layout row>
       <v-flex xs12 sm10 offset-sm1 md8 offset-md2 lg6 offset-lg3 >
-        <h1 class="text--secondary pa-2">Create New Note</h1>
+        <h1 class="text--secondary pa-2">{{$vuetify.t('$vuetify.form.newNote')}}</h1>
         <v-form ref="form" v-model="valid" validation class="pa-2">
           <v-text-field
             name="title"
-            label="Note title"
+            :label="$vuetify.t('$vuetify.field.title')"
             type="text"
             v-model="title"
           ></v-text-field>
           <v-textarea
             name="description"
-            label="Note description"
+            :label="$vuetify.t('$vuetify.field.description')"
             type="text"
             v-model="description"
           ></v-textarea>
           <v-textarea
             name="text"
-            label="Note text"
+            :label="$vuetify.t('$vuetify.field.text')"
             type="text"
             v-model="text"
           ></v-textarea>
         </v-form>
 
-        <v-btn class="white--text mb-3" color="primary" @click="triggerUpload">Upload preview
+        <v-btn class="white--text mb-3" color="primary" @click="triggerUpload">
+          {{$vuetify.t('$vuetify.btn.uploadPreview')}}
           <v-icon right dark>cloud_upload</v-icon>
         </v-btn>
         <input
@@ -37,13 +38,13 @@
         <img :src="imageSrc" alt="" height="150" v-if="imageSrc">
         <v-switch
           class="pa-2"
-          label="Add to private?"
+          :label="$vuetify.t('$vuetify.field.isPrivate')"
           v-model="isPrivate"
           color="primary"
         ></v-switch>
         <v-switch
           class="pa-2"
-          label="Encode this note?"
+          :label="$vuetify.t('$vuetify.field.encode')"
           v-model="encode"
           color="primary"
         ></v-switch>
@@ -51,7 +52,7 @@
           class="pa-2"
           v-if="encode"
           name="key"
-          label="Key for encode note"
+          :label="$vuetify.t('$vuetify.field.encodeKey')"
           type="text"
           v-model="key"
         ></v-text-field>
@@ -62,7 +63,7 @@
           @click="createNote"
           :disabled="!valid || loading"
           :loading="loading"
-        >Create Note</v-btn>
+        >{{$vuetify.t('$vuetify.btn.create')}}</v-btn>
       </v-flex>
     </v-layout>
   </v-container>

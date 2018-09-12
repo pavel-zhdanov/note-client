@@ -1,12 +1,12 @@
 <template>
   <v-container>
-    <v-layout row v-if="note">
-      <v-flex xs12 sm6 offset-sm3>
+    <v-layout justify-center row v-if="note">
+      <v-flex xs12 sm10 md8 lg6 >
         <v-card v-if="!loading">
           <v-img
             v-if="note.imageSrc"
             :src="note.imageSrc"
-            height="300px"
+            height="300"
           >
           </v-img>
           <v-card-text style="word-wrap: break-word">
@@ -18,18 +18,24 @@
           </v-card-text>
           <v-card-actions pa-5>
             <v-spacer></v-spacer>
-            <v-btn flat @click="onDecode">{{decode? 'Decode !': 'Decode ?'}}</v-btn>
-            <v-btn flat v-if="user && note.authorId === user.id" class="warning" @click="onDelete">Delete</v-btn>
+            <v-btn
+              flat
+              @click="onDecode">
+              {{decode? $vuetify.t('$vuetify.btn.decode'): $vuetify.t('$vuetify.btn.decodeQ')}}
+            </v-btn>
+            <v-btn flat v-if="user && note.authorId === user.id" class="warning" @click="onDelete">
+              {{$vuetify.t('$vuetify.btn.delete')}}
+            </v-btn>
             <app-edit-note-modal v-if="user && note.authorId === user.id" :note="note"></app-edit-note-modal>
           </v-card-actions>
           <v-layout justify-end>
-            <v-flex xs12 sm6>
+            <v-flex xs11 sm8 md8 lg8>
               <v-text-field
                 clearable
                 class="pa-0 ma-0"
                 v-if="decode"
                 name="key"
-                label="Key for encode note"
+                :label="$vuetify.t('$vuetify.field.keyForDecode')"
                 type="text"
                 v-model="key"
               ></v-text-field>

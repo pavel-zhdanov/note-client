@@ -8,6 +8,8 @@ import App from './App';
 import router from './router';
 import store from './store/index';
 import config from './config';
+import en from './locale/en';
+import ru from './locale/ru';
 
 import interceptorsSetup from './util/interceptors';
 
@@ -17,6 +19,10 @@ const SocketInstance = SocketIO(config.server);
 Vue.use(VueSocketIO, SocketInstance, store);
 
 Vue.use(Vuetify, {
+  lang: {
+    locales: { en, ru },
+    current: 'ru',
+  },
   theme: {
     primary: '#4c75a3',
     secondary: '#b0bec5',

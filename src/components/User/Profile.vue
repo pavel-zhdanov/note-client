@@ -16,7 +16,7 @@
             class="white--text mb-3"
             color="primary"
             @click="triggerUpload"
-          >Upload avatar
+          >{{$vuetify.t('$vuetify.btn.uploadAvatar')}}
             <v-icon right dark>cloud_upload</v-icon>
           </v-btn>
           <input
@@ -28,17 +28,17 @@
           >
 
           <v-card-text style="word-wrap: break-word">
-            <v-form ref="form" v-model="valid"  class="pa-3 pt-4">
+            <v-form ref="form" v-model="valid">
               <v-text-field
                 name="nickname"
-                label="Nickname"
+                :label="$vuetify.t('$vuetify.field.nickname')"
                 type="text"
                 v-model="editedNickname"
                 :rules="nicknameRules"
               ></v-text-field>
             </v-form>
           </v-card-text>
-          <v-card-actions pa-5>
+          <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
               raised
@@ -47,7 +47,7 @@
               :loading="loading"
               :disabled="!valid || loading"
               @click="onSubmit"
-            >Save</v-btn>
+            >{{$vuetify.t('$vuetify.btn.save')}}</v-btn>
           </v-card-actions>
         </v-card>
         <v-flex v-else xs12 class="text-xs-center">
@@ -68,8 +68,8 @@
       return {
         valid: true,
         nicknameRules: [
-          v => !!v || 'Nickname is required',
-          v => (v && v.length >= 4) || 'Nickname must be equal or more than 4 characters',
+          v => !!v || this.$vuetify.t('$vuetify.rules.nicknameRequired'),
+          v => (v && v.length >= 4) || this.$vuetify.t('$vuetify.rules.nicknameLength'),
         ],
         image: null,
         imageSrc: '',
@@ -77,7 +77,6 @@
     },
     computed: {
       user() {
-        window.console.log('COMPUTED');
         return this.$store.getters.user;
       },
       loading() {

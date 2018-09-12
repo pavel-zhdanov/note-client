@@ -41,7 +41,7 @@
             append-outer-icon="send"
             append-icon="vpn_key"
             clearable
-            label="Message"
+            :label="$vuetify.t('$vuetify.field.message')"
             type="text"
             @click:append-outer="sendMessage"
             @click:append="inputKey"

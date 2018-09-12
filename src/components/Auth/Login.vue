@@ -4,14 +4,14 @@
       <v-flex xs12 sm8 md6 lg4 xl3>
         <v-card class="elevation-12">
           <v-toolbar dark color="primary">
-            <v-toolbar-title>Login form</v-toolbar-title>
+            <v-toolbar-title>{{$vuetify.t('$vuetify.form.login')}}</v-toolbar-title>
           </v-toolbar>
           <v-card-text>
             <v-form v-model="valid" ref="form" lazy-validation>
               <v-text-field
                 prepend-icon="person"
                 name="email"
-                label="Email"
+                :label="$vuetify.t('$vuetify.field.email')"
                 type="email"
                 v-model="email"
                 :rules="emailRules"
@@ -19,7 +19,7 @@
               <v-text-field
                 prepend-icon="lock"
                 name="password"
-                label="Password"
+                :label="$vuetify.t('$vuetify.field.password')"
                 type="password"
                 v-model="password"
                 :rules="passwordRules"
@@ -33,7 +33,7 @@
               @click="onSubmit"
               :disabled="!valid || loading"
               :loading="loading"
-            >Login</v-btn>
+            >{{$vuetify.t('$vuetify.btn.login')}}</v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -50,12 +50,12 @@
         email: '',
         password: '',
         emailRules: [
-          v => !!v || 'E-mail is required',
-          v => /.+@.+/.test(v) || 'E-mail must be valid',
+          v => !!v || this.$vuetify.t('$vuetify.rules.emailRequired'),
+          v => /.+@.+/.test(v) || this.$vuetify.t('$vuetify.rules.emailValid'),
         ],
         passwordRules: [
-          v => !!v || 'Password is required',
-          v => (v && v.length >= 6) || 'Password must be equal or more than 6 characters',
+          v => !!v || this.$vuetify.t('$vuetify.rules.passwordRequired'),
+          v => (v && v.length >= 6) || this.$vuetify.t('$vuetify.rules.passwordLength'),
         ],
         valid: true,
       };

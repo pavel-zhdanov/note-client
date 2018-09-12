@@ -1,12 +1,6 @@
 <template>
   <v-container grid-list-lg>
 
-    <v-layout>
-      <v-flex>
-        <h1 class="text--secondary mb-3">My notes</h1>
-      </v-flex>
-    </v-layout>
-
     <v-layout row wrap v-if="myNotes.length !== 0">
       <v-flex xs12 sm6 md5 lg4 xl4
               mb-3
@@ -27,7 +21,7 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn class="white--text" color="primary" :to="'/note/' + item.id">Open</v-btn>
+                <v-btn class="white--text" color="primary" :to="'/note/' + item.id">{{$vuetify.t('$vuetify.btn.open')}}</v-btn>
               </v-card-actions>
             </v-flex>
           </v-layout>
@@ -37,7 +31,7 @@
 
     <v-layout v-else-if="myNotes.length === 0">
       <v-flex xs12 class="text-xs-center">
-        <h1 class="text--primary">You have no notes</h1>
+        <h1 class="text--primary">{{$vuetify.t('$vuetify.msg.noNotes')}}</h1>
       </v-flex>
     </v-layout>
 

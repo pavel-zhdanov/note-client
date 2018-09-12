@@ -41,8 +41,7 @@
 
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn flat>Share</v-btn>
-              <v-btn raised class="primary" :to="'/note/' + note.id">Open</v-btn>
+              <v-btn raised class="primary" :to="'/note/' + note.id">{{$vuetify.t('$vuetify.btn.open')}}</v-btn>
             </v-card-actions>
           </v-card>
         </v-flex>
