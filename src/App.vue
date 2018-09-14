@@ -158,6 +158,7 @@
         return [
           { title: this.$vuetify.t('$vuetify.navLinks.registration'), icon: 'face', url: '/registration' },
           { title: this.$vuetify.t('$vuetify.navLinks.login'), icon: 'lock', url: '/login' },
+          { title: 'Game', icon: 'games', url: '/game' },
         ];
       },
       currentLocaleIcon() {

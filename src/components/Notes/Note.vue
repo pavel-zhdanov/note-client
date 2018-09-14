@@ -100,11 +100,7 @@
       },
       text() {
         if (!this.note.text) return '';
-        window.console.log(this.note);
         if (this.decodedText.length > 0) return this.decodedText;
-        if (this.note.text.length > 20 && this.note.text.indexOf(' ') === -1) {
-          return 'This text are encoded';
-        }
         return this.note.text;
       },
     },

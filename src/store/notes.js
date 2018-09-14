@@ -144,7 +144,7 @@ export default {
         formData.append('file', image);
         const { data } = await axios.post('/api/note/image', formData);
         window.console.log(data);
-        imageSrc = `${axios.defaults.baseURL}api/note/image/${data.id}`;
+        imageSrc = `${axios.defaults.baseURL}/api/note/image/${data.id}`;
         commit('setLoading', false);
         return imageSrc;
       } catch (error) {

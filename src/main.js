@@ -21,7 +21,7 @@ Vue.use(VueSocketIO, SocketInstance, store);
 Vue.use(Vuetify, {
   lang: {
     locales: { en, ru },
-    current: 'ru',
+    current: 'en',
   },
   theme: {
     primary: '#4c75a3',
